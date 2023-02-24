@@ -1,0 +1,4 @@
+This mod multiply each NPC spawn and tries to visualize sensible multiple boss health bars.
+
+Known problems:
+- No upper limit to boss bars, they can hide screen
