@@ -68,6 +68,13 @@ namespace MultiSpawn
         [DefaultValue(230)]
         public int AITickFactorMax;
 
+        [Label("NPCs to NOT Invert Relative X")]
+        [Tooltip("List of NPC not to invert across X axis")]
+        public HashSet<NPCDefinition> DontInvRelX = new(new[]
+        {
+            NPCID.WallofFlesh
+        }.Select(t => new NPCDefinition(t)));
+
         [Header("DEBUG and NOTWORKING")]
 
         [Label("Idle Boss Bar Seek Extra")]

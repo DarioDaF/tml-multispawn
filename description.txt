@@ -2,3 +2,8 @@ This mod multiply each NPC spawn and tries to visualize sensible multiple boss h
 
 Known problems:
 - No upper limit to boss bars, they can hide screen
+
+Changes:
+- 0.5:
+-- Fixed WoFDraw Tweak incompatibility with AI advance
+-- Added option to override Invert X per boss

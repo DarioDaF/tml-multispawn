@@ -1,4 +1,5 @@
 ﻿using Steamworks;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -19,7 +20,7 @@ namespace MultiSpawn
             On.Terraria.Main.DrawWoF -= Main_DrawWoF;
         }
 
-        public struct WoFData
+        public struct WoFData : IEquatable<WoFData>
         {
             public static WoFData FromMain()
             {
@@ -40,11 +41,22 @@ namespace MultiSpawn
                 Main.wofDrawAreaTop = this.wofDrawAreaTop;
                 Main.wofDrawAreaBottom = this.wofDrawAreaBottom;
             }
+
+            public bool Equals(WoFData other)
+            {
+                if (!this.IsValid() && !other.IsValid())
+                {
+                    return true;
+                }
+                return this.wofNPCIndex == other.wofNPCIndex;
+            }
+
             public int wofNPCIndex;
             public int wofDrawAreaTop;
             public int wofDrawAreaBottom;
+
         }
-        public static List<WoFData> wofData = new();
+        public static HashSet<WoFData> wofData = new(); // (Could as well be a list, BUT out of frame AI advance will mess up the clear!!!)
 
         public class TweakDrawWoF_GNPC : GlobalNPC
         {
@@ -66,6 +78,9 @@ namespace MultiSpawn
 
         private void Main_DrawWoF(On.Terraria.Main.orig_DrawWoF orig, Main self)
         {
+            // Clear invalid data  (Could as well be absent, BUT out of frame AI advance will mess up the clear!!!)
+            wofData.RemoveWhere(d => !d.IsValid());
+            // Draw the rest
             foreach (var datum in wofData)
             {
                 datum.ToMain();

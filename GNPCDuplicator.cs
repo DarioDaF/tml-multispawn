@@ -63,7 +63,7 @@ namespace MultiSpawn
             for (int i = 0; i < spawns; ++i)
             {
                 var npcX = npc.position.X + npc.width / 2;
-                if (conf.InvRelX)
+                if (conf.InvRelX && !conf.DontInvRelX.Contains(npcDef))
                 {
                     float refX;
                     if (conf.InvXFromWorld.Contains(npcDef))
