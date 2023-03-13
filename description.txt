@@ -4,6 +4,8 @@ Known problems:
 - No upper limit to boss bars, they can hide screen
 
 Changes:
+- 0.6:
+-- Various WoF fixes and added mode preset selector
 - 0.5:
 -- Fixed WoFDraw Tweak incompatibility with AI advance
 -- Added option to override Invert X per boss

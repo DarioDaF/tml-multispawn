@@ -1,7 +1,10 @@
-﻿using Terraria;
+﻿using Terraria.ID;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Microsoft.Xna.Framework;
+using System;
 
 namespace MultiSpawn
 {
@@ -9,9 +12,11 @@ namespace MultiSpawn
     public class MSDuplicateEntitySource : IEntitySource
     {
         public IEntitySource originSource;
-        public MSDuplicateEntitySource(IEntitySource originSource)
+        public int cloneNumber;
+        public MSDuplicateEntitySource(IEntitySource originSource, int cloneNumber)
         {
             this.originSource = originSource;
+            this.cloneNumber = cloneNumber;
         }
         public string Context => "MultiSpawn: Duplicate Entity (" + originSource.Context + ")";
     }
@@ -31,6 +36,10 @@ namespace MultiSpawn
             var conf = ModContent.GetInstance<MSConfig>();
 
             var npcDef = new NPCDefinition(npc.type);
+
+            // Get NPC pos before AI (from position = { X - npc.width / 2, Y - npc.height } in NewNPC)
+            var npcSpawnPosition = new Vector2(npc.position.X + npc.width / 2, npc.position.Y + npc.height);
+            var npcSize = new Vector2(npc.width, npc.height);
 
             if (conf.NaturalForceAI.Contains(npcDef))
             {
@@ -62,11 +71,31 @@ namespace MultiSpawn
 
             for (int i = 0; i < spawns; ++i)
             {
-                var npcX = npc.position.X + npc.width / 2;
-                if (conf.InvRelX && !conf.DontInvRelX.Contains(npcDef))
+                var invRelX = conf.InvRelX && !conf.DontInvRelX.Contains(npcDef);
+                var invXFromWorld = conf.InvXFromWorld.Contains(npcDef);
+
+                if (npc.type == NPCID.WallofFlesh)
+                {
+                    // Makes WoF spawn SAMESIDE when multiple clones
+                    var wofMoonwalkOverride = (i > 0) && (conf.WoFXVelMul < 0.0f);
+                    if (wofMoonwalkOverride)
+                    {
+                        invRelX = false;
+                    }
+                    // Makes WoF spawn CROSSING when clone 1
+                    var wof1CrossingOverride = (i == 1) && (conf.HaveSecondDupWoFCrossing);
+                    if (wof1CrossingOverride)
+                    {
+                        invRelX = true;
+                        invXFromWorld = true;
+                    }
+                }
+
+                var dupNpcSpawnPosition = npcSpawnPosition;
+                if (invRelX)
                 {
                     float refX;
-                    if (conf.InvXFromWorld.Contains(npcDef))
+                    if (invXFromWorld)
                     {
                         // Main.rightWorld = Main.maxTilesX * 16
                         refX = (Main.rightWorld - Main.leftWorld) / 2;
@@ -74,12 +103,24 @@ namespace MultiSpawn
                     {
                         refX = Main.CurrentPlayer.position.X + Main.CurrentPlayer.width / 2;
                     }
-                    npcX = 2 * refX - npcX;
+                    dupNpcSpawnPosition.X = 2 * refX - dupNpcSpawnPosition.X;
                 }
                 var off = Main.rand.NextVector2Square(-conf.PositionOffsetRange, conf.PositionOffsetRange);
+                
+                if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye)
+                {
+                    // Try prevent WoF burrowing
+                    off.Y = 0;
+                }
+
+                dupNpcSpawnPosition += off;
+                // Constraint inside the world!
+                dupNpcSpawnPosition.X = Math.Clamp(dupNpcSpawnPosition.X, Main.leftWorld + npcSize.X / 2, Main.rightWorld - npcSize.X / 2);
+                dupNpcSpawnPosition.Y = Math.Clamp(dupNpcSpawnPosition.Y, Main.topWorld + npcSize.Y, Main.bottomWorld);
+
                 var dup = NPC.NewNPCDirect(
-                    new MSDuplicateEntitySource(source),
-                    (int)(npcX + off.X), (int)(npc.position.Y + npc.height + off.Y),
+                    new MSDuplicateEntitySource(source, i),
+                    (int)(dupNpcSpawnPosition.X), (int)(dupNpcSpawnPosition.Y),
                     npc.type,
                     0,
                     npc.ai[0], npc.ai[1], npc.ai[2], npc.ai[3],

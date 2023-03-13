@@ -8,9 +8,13 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Newtonsoft.Json;
+using Terraria;
 
 namespace MultiSpawn
 {
+
+    // @ERROR: Moving stuff in a separate config IS A PROBLEM cause save does not apply to the other config!!! (so presets don't work)
+    //public class MSPropConfig : ModConfig
 
     public class MSConfig : ModConfig
     {
@@ -68,14 +72,23 @@ namespace MultiSpawn
         [DefaultValue(230)]
         public int AITickFactorMax;
 
+        [Label("WoF Draw No Clutter")]
+        [Tooltip("Reduces clutter by bypassing the WoF drawing code to link hungries only to nearest WoF")]
+        [DefaultValue(true)]
+        public bool WoFDrawNoClutter;
+
+        //[SeparatePage] // (WORKS BAD!)
+        [Header("DEBUG and NOTWORKING")]
+
         [Label("NPCs to NOT Invert Relative X")]
         [Tooltip("List of NPC not to invert across X axis")]
-        public HashSet<NPCDefinition> DontInvRelX = new(new[]
-        {
-            NPCID.WallofFlesh
-        }.Select(t => new NPCDefinition(t)));
+        public HashSet<NPCDefinition> DontInvRelX = new();
 
-        [Header("DEBUG and NOTWORKING")]
+        [Label("WoF Dupe X Velocity Multiplyer")]
+        [Tooltip("Multiply X velocity of WoF if it is a clone")]
+        [DefaultValue(-1.0f)]
+        [Range(-1.0f, 1.0f)]
+        public float WoFXVelMul;
 
         [Label("Idle Boss Bar Seek Extra")]
         [Tooltip("Extra area out of player screen to seek for active bosses while idle [Valilla default 5000]")]
@@ -108,7 +121,6 @@ namespace MultiSpawn
         [Tooltip("Enemies to invert X position wrt world center instead of player")]
         public HashSet<NPCDefinition> InvXFromWorld = new(new[]
         {
-            NPCID.WallofFlesh,
             NPCID.LunarTowerNebula, NPCID.LunarTowerSolar, NPCID.LunarTowerStardust, NPCID.LunarTowerVortex
         }.Select(t => new NPCDefinition(t)));
 
@@ -121,35 +133,6 @@ namespace MultiSpawn
             NPCID.Golem // Need to make NewNPC in Golem AI to trigger with Start!
             //NPCID.MoonLordCore // Cannot force AI because it waits before spawning stuff for the drama
         }.Select(t => new NPCDefinition(t)));
-
-        private int _ExtraNPCs;
-        [Label("Extra NPC Limit [NOTWORKING]")]
-        [Tooltip("Extends number of NPCs by this number (EXPERIMENTAL/NOTWORKING: every NPC above the 200 vanilla limit can behave strangely)")]
-        [DefaultValue(0)]
-        [Range(0, 400)]
-        public int ExtraNPCs
-        {
-            get => _ExtraNPCs;
-            set
-            {
-                _ExtraNPCs = value;
-                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
-                if (tnpcl != null)
-                    tnpcl.AlterNPCLimit(_ExtraNPCs);
-            }
-        }
-
-        [Label("Extra NPC Limit Patched")]
-        public bool LoadedILMaxNPC
-        {
-            get
-            {
-                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
-                if (tnpcl != null)
-                    return tnpcl.loadedILMaxNpc;
-                return false;
-            }
-        }
 
         [Label("Boss Bar Sorting [RECOMMENDED]")]
         [Tooltip("Try to keep boss bars in a consistent order")]
@@ -178,5 +161,108 @@ namespace MultiSpawn
             NPCID.MoonLordCore, NPCID.MoonLordHand, NPCID.MoonLordHead,
             NPCID.MartianSaucer, NPCID.MartianSaucerCannon, NPCID.MartianSaucerCore, NPCID.MartianSaucerTurret
         }.Select(t => new NPCDefinition(t)));
+
+        [Header("WoF Mode")]
+
+        [Label("SecondDup WoF Crossing")]
+        [Tooltip("Have the second dupe (3rd wof) behaviour be forced to crossing")]
+        [DefaultValue(true)]
+        public bool HaveSecondDupWoFCrossing;
+
+        // PROPERTIES
+        // @WARNING: Properties get processed AFTER fields, so you get them at the bottom even if you shouldn't
+
+        [JsonIgnore]
+        [Label("WoF Presets")]
+        [Tooltip("tML is broken for property updates, so save right after each change of this property!")]
+        public WoFPresets WoFPreset
+        {
+            get
+            {
+                var conf = ModContent.GetInstance<MSConfig>();
+                var wofDef = new NPCDefinition(NPCID.WallofFlesh);
+                var wofDontInvX = conf.DontInvRelX.Contains(wofDef);
+                var wofInvXFromWorld = conf.InvXFromWorld.Contains(wofDef);
+                var wofMoonwalk = conf.WoFXVelMul < 0.0f;
+
+                if (wofDontInvX && !wofMoonwalk)
+                    return WoFPresets.SAMESIDE;
+
+                if (!wofDontInvX && wofInvXFromWorld && !wofMoonwalk)
+                    return WoFPresets.CROSSING;
+
+                if (!wofDontInvX && !wofInvXFromWorld && wofMoonwalk)
+                    return WoFPresets.BOX;
+
+                return WoFPresets.UNKNOWN;
+            }
+            set
+            {
+                var conf = ModContent.GetInstance<MSConfig>();
+                var wofDef = new NPCDefinition(NPCID.WallofFlesh);
+                switch (value)
+                {
+                    case WoFPresets.SAMESIDE:
+                        conf.DontInvRelX.Add(wofDef);
+                        conf.WoFXVelMul = 1.0f;
+                        break;
+                    case WoFPresets.CROSSING:
+                        conf.DontInvRelX.Remove(wofDef);
+                        conf.InvXFromWorld.Add(wofDef);
+                        conf.WoFXVelMul = 1.0f;
+                        break;
+                    case WoFPresets.BOX:
+                        conf.DontInvRelX.Remove(wofDef);
+                        conf.InvXFromWorld.Remove(wofDef);
+                        conf.WoFXVelMul = -1.0f;
+                        break;
+                }
+            }
+        }
+        public enum WoFPresets
+        {
+            UNKNOWN,
+            SAMESIDE,
+            CROSSING,
+            BOX
+        }
+
+        [Header("DEBUG and NOTWORKING")]
+
+        [JsonIgnore]
+        [Label("Stock MaxNPCs")]
+        public int StockMaxNPCs => Main.maxNPCs;
+
+        [JsonIgnore] // Seems like getters only don't get ignored in json by default!
+        [Label("Extra NPC Limit Patched")]
+        public bool LoadedILMaxNPC
+        {
+            get
+            {
+                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
+                if (tnpcl != null)
+                    return tnpcl.loadedILMaxNpc;
+                return false;
+            }
+        }
+
+        private int _ExtraNPCs;
+        [Label("Extra NPC Limit [NOTWORKING]")]
+        [Tooltip("Extends number of NPCs by this number (EXPERIMENTAL/NOTWORKING: every NPC above the 200 vanilla limit can behave strangely)")]
+        [DefaultValue(0)]
+        [Range(0, 400)]
+        public int ExtraNPCs
+        {
+            get => _ExtraNPCs;
+            set
+            {
+                _ExtraNPCs = value;
+                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
+                if (tnpcl != null)
+                    tnpcl.AlterNPCLimit(_ExtraNPCs);
+            }
+        }
+
+
     }
 }
