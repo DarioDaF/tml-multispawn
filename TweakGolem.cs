@@ -30,7 +30,7 @@ namespace MultiSpawn
             {
                 // Draw Golem BELOW others (even if they are in the wrong position)
                 // Do this only for Golem and in a fast way so not to load every frame
-                for (int i = 0; i < Main.maxNPCs; ++i)
+                for (int i = 0; i < MultiSpawn.maxNPCs; ++i)
                 {
                     var npc = Main.npc[i];
                     if (npc.active && npc.type == NPCID.Golem && !npc.hide)

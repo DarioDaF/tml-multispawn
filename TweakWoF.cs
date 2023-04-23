@@ -142,7 +142,7 @@ namespace MultiSpawn
                 // Map hungries to WoFs
                 var hungryMap = wofData.ToDictionary(d => d, d => new List<int>());
 
-                for (int j = 0; j < Main.maxNPCs; j++)
+                for (int j = 0; j < MultiSpawn.maxNPCs; j++)
                 {
                     if (Main.npc[j].active && Main.npc[j].aiStyle == NPCAIStyleID.TheHungry)
                     {

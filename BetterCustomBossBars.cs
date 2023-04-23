@@ -45,7 +45,7 @@ namespace MultiSpawn.BetterCustomBossBars
             {
                 coreType = Main.npc[npcIndexToAimAt].type;
             }
-            for (int i = Math.Max(npcIndexToAimAt, 0); i < Main.maxNPCs; ++i)
+            for (int i = Math.Max(npcIndexToAimAt, 0); i < MultiSpawn.maxNPCs; ++i)
             {
                 var npc = Main.npc[i];
                 if (npc.active)
@@ -77,7 +77,7 @@ namespace MultiSpawn.BetterCustomBossBars
 
         public bool ValidateAndCollectNecessaryInfo(ref BigProgressBarInfo info)
         {
-            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > Main.maxNPCs)
+            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > MultiSpawn.maxNPCs)
                 return false;
 
             NPC npc = Main.npc[info.npcIndexToAimAt];
@@ -116,7 +116,7 @@ namespace MultiSpawn.BetterCustomBossBars
 
         public bool ValidateAndCollectNecessaryInfo(ref BigProgressBarInfo info)
         {
-            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > Main.maxNPCs)
+            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > MultiSpawn.maxNPCs)
                 goto invalidBar;
 
             NPC npc = Main.npc[info.npcIndexToAimAt];
@@ -168,7 +168,7 @@ namespace MultiSpawn.BetterCustomBossBars
 
         public bool ValidateAndCollectNecessaryInfo(ref BigProgressBarInfo info)
         {
-            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > Main.maxNPCs)
+            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > MultiSpawn.maxNPCs)
                 return false;
 
             NPC npc = Main.npc[info.npcIndexToAimAt];
@@ -265,7 +265,7 @@ namespace MultiSpawn.BetterCustomBossBars
 
         public bool ValidateAndCollectNecessaryInfo(ref BigProgressBarInfo info)
         {
-            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > Main.maxNPCs)
+            if (info.npcIndexToAimAt < 0 || info.npcIndexToAimAt > MultiSpawn.maxNPCs)
                 return false;
 
             info.npcIndexToAimAt = GetCore(Main.npc[info.npcIndexToAimAt]);

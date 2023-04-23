@@ -1,9 +1,22 @@
 This mod multiply each NPC spawn and tries to visualize sensible multiple boss health bars.
 
+All configuration under "DEBUG and NOTWORKING" is not really stable or working and
+sticking to the default values for those fields is highly recommended.
+NOTE: WoF options are BELOW the first debug zone, so scroll down to the bottom to see those.
+The main reason for it to be there is to allow creation of reasonable setups
+for non vanilla bosses because bosses creation/linking and positioning can break
+the multispawn mechanic if not correctly configured in these fields.
+
 Known problems:
-- No upper limit to boss bars, they can hide screen
+- Old One's Army crystal is not working appropriately for now
+- No upper limit to boss bars, they can hide screen (design choice, probably won't be fixed, you can adjust number of columns/spacing and UI scale if you want a lot of them)
 
 Changes:
+- 0.8:
+-- Interoperability with NPCUnlimiter to allow increasing the NPC limit
+- 0.7:
+-- Public release in the browser
+-- Minor touches
 - 0.6:
 -- Various WoF fixes and added mode preset selector
 - 0.5:

@@ -1,22 +1,23 @@
-using Microsoft.Xna.Framework;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Transactions;
+using System.Reflection;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.GameInput;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using RangeAttribute = Terraria.ModLoader.Config.RangeAttribute;
 
 namespace MultiSpawn
 {
 	public class MultiSpawn : Mod
 	{
+        public override void Load()
+        {
+            base.Load();
+
+            if (ModLoader.TryGetMod("NPCUnlimiter", out var unlimiter))
+			{
+                fi_maxNPCs = unlimiter.Code.GetType("NPCUnlimiter.MaxNPCHandler").GetField("maxNPCs");
+			}
+        }
+
+		private static FieldInfo fi_maxNPCs = null;
+
+        public static int maxNPCs => (int?)fi_maxNPCs?.GetValue(null) ?? Main.maxNPCs;
 	}
 }

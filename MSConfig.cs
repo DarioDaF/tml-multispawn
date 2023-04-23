@@ -229,40 +229,9 @@ namespace MultiSpawn
 
         [Header("DEBUG and NOTWORKING")]
 
-        [JsonIgnore]
-        [Label("Stock MaxNPCs")]
-        public int StockMaxNPCs => Main.maxNPCs;
-
-        [JsonIgnore] // Seems like getters only don't get ignored in json by default!
-        [Label("Extra NPC Limit Patched")]
-        public bool LoadedILMaxNPC
-        {
-            get
-            {
-                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
-                if (tnpcl != null)
-                    return tnpcl.loadedILMaxNpc;
-                return false;
-            }
-        }
-
-        private int _ExtraNPCs;
-        [Label("Extra NPC Limit [NOTWORKING]")]
-        [Tooltip("Extends number of NPCs by this number (EXPERIMENTAL/NOTWORKING: every NPC above the 200 vanilla limit can behave strangely)")]
-        [DefaultValue(0)]
-        [Range(0, 400)]
-        public int ExtraNPCs
-        {
-            get => _ExtraNPCs;
-            set
-            {
-                _ExtraNPCs = value;
-                var tnpcl = ModContent.GetInstance<TweakNPCLimit>();
-                if (tnpcl != null)
-                    tnpcl.AlterNPCLimit(_ExtraNPCs);
-            }
-        }
-
+        [Label("Actual NPC Limit used")]
+        [Tooltip("NPC limit used taking into account vanilla and NPCUnlimiter if present")]
+        public int NPCLimit => MultiSpawn.maxNPCs;
 
     }
 }

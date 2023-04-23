@@ -48,7 +48,7 @@ namespace MultiSpawn
             {
                 DrawShadedText(
                     Main.spriteBatch, FontAssets.MouseText.Value,
-                    $"Current: {currentMobs}/{Main.maxNPCs}\n" +
+                    $"Current: {currentMobs}/{MultiSpawn.maxNPCs}\n" +
                     $"Natural: {naturalSpawnedMobs}\n" +
                     $"OneFrameForcedNatural: {oneFrameForcedNatural}\n" +
                     $"Dups: {duplicatedMobs}\n" +
@@ -79,7 +79,7 @@ namespace MultiSpawn
                 var conf = ModContent.GetInstance<MSConfig>();
                 var basePos = new Vector2(300, 70);
                 int j = 0;
-                for (int i = 0; i < Main.maxNPCs; ++i)
+                for (int i = 0; i < MultiSpawn.maxNPCs; ++i)
                 {
                     var npc = Main.npc[i];
                     if (!npc.active)
@@ -107,7 +107,7 @@ namespace MultiSpawn
         public override void PostUpdateNPCs()
         {
             currentMobs = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            for (int i = 0; i < MultiSpawn.maxNPCs; i++)
             {
                 if (Main.npc[i].active)
                     ++currentMobs;

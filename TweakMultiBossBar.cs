@@ -232,7 +232,7 @@ namespace MultiSpawn
 
             Rectangle value = new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight);
             value.Inflate(conf.IdleBossBarSeekExtra, conf.IdleBossBarSeekExtra);
-            for (int i = 0; i < Main.maxNPCs; i++)
+            for (int i = 0; i < MultiSpawn.maxNPCs; i++)
             {
                 NPC nPC = Main.npc[i];
                 if (nPC.active && nPC.Hitbox.Intersects(value))
