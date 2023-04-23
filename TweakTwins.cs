@@ -1,5 +1,4 @@
-﻿using IL.Terraria.DataStructures;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria;
 using Terraria.ID;

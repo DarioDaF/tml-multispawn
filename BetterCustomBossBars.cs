@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.BigProgressBar;
-using System.Collections.Immutable;
 using System.Reflection;
-using IL.Terraria.DataStructures;
 
 namespace MultiSpawn.BetterCustomBossBars
 {

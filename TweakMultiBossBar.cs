@@ -11,9 +11,7 @@ using Terraria;
 using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using IL.Terraria.DataStructures;
 using System.Linq;
-using System.Security.Cryptography;
 
 /*
 

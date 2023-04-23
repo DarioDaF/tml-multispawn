@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Newtonsoft.Json;
-using Terraria;
 
 namespace MultiSpawn
 {
