@@ -19,7 +19,7 @@ namespace MultiSpawn
 
         public override void Unload()
         {
-            On.Terraria.Main.DrawNPCs += Main_DrawNPCs;
+            On.Terraria.Main.DrawNPCs -= Main_DrawNPCs;
             //On.Terraria.NPC.NewNPC -= NPC_NewNPC;
         }
 

@@ -16,7 +16,14 @@ namespace MultiSpawn
 			}
         }
 
-		private static FieldInfo fi_maxNPCs = null;
+        public override void Unload()
+        {
+            fi_maxNPCs = null;
+
+            base.Unload();
+        }
+
+        private static FieldInfo fi_maxNPCs = null;
 
         public static int maxNPCs => (int?)fi_maxNPCs?.GetValue(null) ?? Main.maxNPCs;
 	}
