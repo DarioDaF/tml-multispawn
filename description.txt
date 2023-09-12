@@ -12,6 +12,8 @@ Known problems:
 - No upper limit to boss bars, they can hide screen (design choice, probably won't be fixed, you can adjust number of columns/spacing and UI scale if you want a lot of them)
 
 Changes:
+- 0.11:
+-- Changes for 1.4.4 (not fully tested)
 - 0.8:
 -- Interoperability with NPCUnlimiter to allow increasing the NPC limit
 - 0.7:
