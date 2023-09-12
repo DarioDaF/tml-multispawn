@@ -64,7 +64,7 @@ namespace MultiSpawn.BetterCustomBossBars
     // Good for TwinsBigProgressBar
     public class CollectiveBar : IBigProgressBar
     {
-        private float _lifePercentToShow;
+        private (float, float) _lifePercentToShow;
         private int _headIndex;
 
         private HashSet<int> types;
@@ -84,7 +84,7 @@ namespace MultiSpawn.BetterCustomBossBars
 
             var (life, lifeMax) = MyBarHelper.LifeOfCore(this.types);
 
-            _lifePercentToShow = Utils.Clamp((float)life / (float)lifeMax, 0f, 1f);
+            _lifePercentToShow = (life, lifeMax);
             _headIndex = npc.GetBossHeadTextureIndex();
             return true;
         }
@@ -93,7 +93,7 @@ namespace MultiSpawn.BetterCustomBossBars
         {
             Texture2D value = TextureAssets.NpcHeadBoss[_headIndex].Value;
             Rectangle barIconFrame = value.Frame();
-            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow, value, barIconFrame);
+            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow.Item1, _lifePercentToShow.Item2, value, barIconFrame);
         }
     }
 
@@ -101,7 +101,7 @@ namespace MultiSpawn.BetterCustomBossBars
     public class CollectiveMaxBar : IBigProgressBar
     {
         private float _lifeMax;
-        private float _lifePercentToShow;
+        private (float, float) _lifePercentToShow;
 
         private HashSet<int> types;
         private int npcHeadType;
@@ -127,7 +127,7 @@ namespace MultiSpawn.BetterCustomBossBars
                 this._lifeMax = lifeMax;
             }
 
-            _lifePercentToShow = Utils.Clamp((float)life / (float)this._lifeMax, 0f, 1f);
+            _lifePercentToShow = (life, this._lifeMax);
             return true;
 
         invalidBar:
@@ -140,14 +140,14 @@ namespace MultiSpawn.BetterCustomBossBars
             var headIndex = NPCID.Sets.BossHeadTextures[this.npcHeadType];
             Texture2D value = TextureAssets.NpcHeadBoss[headIndex].Value;
             Rectangle barIconFrame = value.Frame();
-            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow, value, barIconFrame);
+            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow.Item1, _lifePercentToShow.Item2, value, barIconFrame);
         }
     }
 
     // Good for MartianSaucerBigProgressBar (with natural AI force) and GolemHeadProgressBar (with tweaks for correct order)
     public class CoreBar : IBigProgressBar
     {
-        private float _lifePercentToShow;
+        private (float, float) _lifePercentToShow;
 
         private int coreType;
         //private HashSet<int> types;
@@ -181,7 +181,7 @@ namespace MultiSpawn.BetterCustomBossBars
             var types = typesFunc();
             var (life, lifeMax) = MyBarHelper.LifeOfCore(types, info.npcIndexToAimAt);
             
-            _lifePercentToShow = Utils.Clamp((float)life / (float)lifeMax, 0f, 1f);
+            _lifePercentToShow = (life, lifeMax);
             return true;
         }
 
@@ -190,14 +190,14 @@ namespace MultiSpawn.BetterCustomBossBars
             var headIndex = NPCID.Sets.BossHeadTextures[this.npcHeadType];
             Texture2D value = TextureAssets.NpcHeadBoss[headIndex].Value;
             Rectangle barIconFrame = value.Frame();
-            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow, value, barIconFrame);
+            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow.Item1, _lifePercentToShow.Item2, value, barIconFrame);
         }
     }
 
     // Custom bar for moonlord using AI crawling
     public class MoonLordBar : IBigProgressBar
     {
-        private float _lifePercentToShow;
+        private (float, float) _lifePercentToShow;
 
         private static readonly HashSet<int> _CHILDRENTYPES = new()
         {
@@ -281,7 +281,7 @@ namespace MultiSpawn.BetterCustomBossBars
                 lifeMax += npc.lifeMax;
             }
 
-            _lifePercentToShow = Utils.Clamp((float)life / (float)lifeMax, 0f, 1f);
+            _lifePercentToShow = (life, lifeMax);
             return true;
         }
 
@@ -290,7 +290,7 @@ namespace MultiSpawn.BetterCustomBossBars
             var headIndex = NPCID.Sets.BossHeadTextures[NPCID.MoonLordHead];
             Texture2D value = TextureAssets.NpcHeadBoss[headIndex].Value;
             Rectangle barIconFrame = value.Frame();
-            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow, value, barIconFrame);
+            BigProgressBarHelper.DrawFancyBar(spriteBatch, _lifePercentToShow.Item1, _lifePercentToShow.Item2, value, barIconFrame);
         }
     }
 

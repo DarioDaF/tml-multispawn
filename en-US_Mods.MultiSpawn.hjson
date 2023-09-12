@@ -1,0 +1,136 @@
+Configs: {
+	MSConfig: {
+		DisplayName: Configuration
+
+		PositionOffsetRange: {
+			Label: Position Offset Range
+			Tooltip: Randomized maximum distance between duplicate spawns
+		}
+
+		InvRelX: {
+			Label: Position Invert Relative X
+			Tooltip: Invert side of duplicated enemies (if enabled try to spawn pillars while in the center of the map)
+		}
+
+		MaxSpawns: {
+			Label: Maximum Spawns
+			Tooltip: Maximum number of extra spawns for each event
+		}
+
+		BossBarYOffset: {
+			Label: Boss Bar Y Offset
+			Tooltip: Vertical offset between multiple boss bars
+		}
+
+		BossBarColumns: {
+			Label: Boss Bar Columns
+			Tooltip: Number of bars to try to fit horizontally
+		}
+
+		ActiveBossBarSeek: {
+			Label: Active Boss Bar Seek
+			Tooltip: Actively seek all boss bars in the area, even when one is already shown
+		}
+
+		AITickFactorMin: {
+			Label: AI Tick Randomization Factor Min
+			Tooltip: Advance clones AI so they don't match their parent (can disrupt movement)
+		}
+
+		AITickFactorMax: {
+			Label: AI Tick Randomization Factor Max
+			Tooltip: Advance clones AI so they don't match their parent (can disrupt movement)
+		}
+
+		WoFDrawNoClutter: {
+			Label: WoF Draw No Clutter
+			Tooltip: Reduces clutter by bypassing the WoF drawing code to link hungries only to nearest WoF
+		}
+
+		Headers: {
+			Debug: DEBUG and NOTWORKING
+			WoF: WoF Mode
+			DebugProps: DEBUG and NOTWORKING
+		}
+
+		DontInvRelX: {
+			Label: NPCs to NOT Invert Relative X
+			Tooltip: List of NPC not to invert across X axis
+		}
+
+		WoFXVelMul: {
+			Label: WoF Dupe X Velocity Multiplyer
+			Tooltip: Multiply X velocity of WoF if it is a clone
+		}
+
+		IdleBossBarSeekExtra: {
+			Label: Idle Boss Bar Seek Extra
+			Tooltip: Extra area out of player screen to seek for active bosses while idle [Valilla default 5000]
+		}
+
+		AvoidAISpawnDuplication: {
+			Label: Avoid AI Spawn Duplication [DEPRECATED]
+			Tooltip: Don't duplicate NPC spawned entities (like skeletron hands or worm segments)
+		}
+
+		TryAIOneFrame: {
+			Label: Try AI for One Frame [RECOMMENDED]
+			Tooltip: Try to spawn the duplicate, make it live for one AI cycle and determine if it is resident
+		}
+
+		NeverDupe: {
+			Label: Never Duplicate
+			Tooltip: Enemies to never try to duplicate
+		}
+
+		InvXFromWorld: {
+			Label: Invert X World
+			Tooltip: Enemies to invert X position wrt world center instead of player
+		}
+
+		NaturalForceAI: {
+			Label: Natural Spawn Force AI
+			Tooltip: Force AI tick of natural spawn to guarantee direct subordinate spawn order
+		}
+
+		BossBarSorting: {
+			Label: Boss Bar Sorting [RECOMMENDED]
+			Tooltip: Try to keep boss bars in a consistent order
+		}
+
+		NPCSuppressBar: {
+			Label: NPCs to Suppress Health Bar
+			Tooltip: List of NPC types to block from displaying boss bars
+		}
+
+		ShowSpawnsDebug: {
+			Label: Show Spawns Debug
+			Tooltip: Show debug duplication info and caps
+		}
+
+		NPCToShowSlots: {
+			Label: NPCs to Show Slots
+			Tooltip: List of NPC types to show in the slots view to define the order
+		}
+
+		HaveSecondDupWoFCrossing: {
+			Label: SecondDup WoF Crossing
+			Tooltip: Have the second dupe (3rd wof) behaviour be forced to crossing
+		}
+
+		WoFPreset: {
+			Label: WoF Presets
+			Tooltip: tML is broken for property updates, so save right after each change of this property!
+		}
+
+		NPCLimit: {
+			Label: Actual NPC Limit used
+			Tooltip: NPC limit used taking into account vanilla and NPCUnlimiter if present
+		}
+
+		MinSpawns: {
+			Label: Min Spawns
+			Tooltip: ""
+		}
+	}
+}

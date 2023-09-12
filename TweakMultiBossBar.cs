@@ -12,6 +12,7 @@ using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using System.Linq;
+using MonoMod.RuntimeDetour;
 
 /*
 
@@ -41,6 +42,7 @@ namespace MultiSpawn
     {
         private List<Tuple<IBigProgressBar, BigProgressBarInfo>> bars = new();
         private static Vector2 drawFancyBarOffset = new();
+        private ILHook Hook_DFB_TML;
 
         private static readonly Dictionary<Type, IBigProgressBar> barSwaps = new()
         {
@@ -75,12 +77,15 @@ namespace MultiSpawn
 
         public override void Load()
         {
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.Update += BigProgressBarSystem_Update;
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.Draw += BigProgressBarSystem_Draw;
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.TryTracking += BigProgressBarSystem_TryTracking;
-            IL.Terraria.GameContent.UI.BigProgressBar.BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_Texture2D_Rectangle += BigProgressBarHelper_DrawFancyBar_Both;
-            IL.Terraria.GameContent.UI.BigProgressBar.BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_Texture2D_Rectangle_float += BigProgressBarHelper_DrawFancyBar_Both;
-            HookEndpointManager.Modify(typeof(BossBarLoader).GetMethod(nameof(BossBarLoader.DrawFancyBar_TML)), (ILContext.Manipulator)BigProgressBarHelper_DrawFancyBar_Both);
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.Update += BigProgressBarSystem_Update;
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.Draw += BigProgressBarSystem_Draw;
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.TryTracking += BigProgressBarSystem_TryTracking;
+            Terraria.GameContent.UI.BigProgressBar.IL_BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_float_Texture2D_Rectangle += BigProgressBarHelper_DrawFancyBar_Both;
+            Terraria.GameContent.UI.BigProgressBar.IL_BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_float_Texture2D_Rectangle_float_float += BigProgressBarHelper_DrawFancyBar_Both;
+            Hook_DFB_TML = new ILHook(
+                typeof(BossBarLoader).GetMethod(nameof(BossBarLoader.DrawFancyBar_TML)),
+                BigProgressBarHelper_DrawFancyBar_Both
+            );
 
             var vanillaBossBarMapField = typeof(BigProgressBarSystem).GetField("_bossBarsByNpcNetId", BindingFlags.Instance | BindingFlags.NonPublic);
             _OldVanillaBossBarMap = (Dictionary<int, IBigProgressBar>)vanillaBossBarMapField.GetValue(Main.BigBossProgressBar);
@@ -94,12 +99,12 @@ namespace MultiSpawn
             var vanillaBossBarMapField = typeof(BigProgressBarSystem).GetField("_bossBarsByNpcNetId", BindingFlags.Instance | BindingFlags.NonPublic);
             vanillaBossBarMapField.SetValue(Main.BigBossProgressBar, _OldVanillaBossBarMap);
 
-            HookEndpointManager.Unmodify(typeof(BossBarLoader).GetMethod(nameof(BossBarLoader.DrawFancyBar_TML)), (ILContext.Manipulator)BigProgressBarHelper_DrawFancyBar_Both);
-            IL.Terraria.GameContent.UI.BigProgressBar.BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_Texture2D_Rectangle_float -= BigProgressBarHelper_DrawFancyBar_Both;
-            IL.Terraria.GameContent.UI.BigProgressBar.BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_Texture2D_Rectangle -= BigProgressBarHelper_DrawFancyBar_Both;
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.TryTracking -= BigProgressBarSystem_TryTracking;
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.Draw -= BigProgressBarSystem_Draw;
-            On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.Update -= BigProgressBarSystem_Update;
+            Hook_DFB_TML.Dispose();
+            Terraria.GameContent.UI.BigProgressBar.IL_BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_float_Texture2D_Rectangle_float_float -= BigProgressBarHelper_DrawFancyBar_Both;
+            Terraria.GameContent.UI.BigProgressBar.IL_BigProgressBarHelper.DrawFancyBar_SpriteBatch_float_float_Texture2D_Rectangle -= BigProgressBarHelper_DrawFancyBar_Both;
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.TryTracking -= BigProgressBarSystem_TryTracking;
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.Draw -= BigProgressBarSystem_Draw;
+            Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.Update -= BigProgressBarSystem_Update;
         }
 
         private void BigProgressBarHelper_DrawFancyBar_Both(ILContext il)
@@ -156,7 +161,7 @@ namespace MultiSpawn
             return -1;
         }
 
-        private bool BigProgressBarSystem_TryTracking(On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.orig_TryTracking orig, BigProgressBarSystem self, int npcIndex)
+        private bool BigProgressBarSystem_TryTracking(Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.orig_TryTracking orig, BigProgressBarSystem self, int npcIndex)
         {
             var valid = orig(self, npcIndex);
             if (valid)
@@ -179,7 +184,7 @@ namespace MultiSpawn
             return valid;
         }
 
-        private void BigProgressBarSystem_Draw(On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.orig_Draw orig, BigProgressBarSystem self, SpriteBatch spriteBatch)
+        private void BigProgressBarSystem_Draw(Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.orig_Draw orig, BigProgressBarSystem self, SpriteBatch spriteBatch)
         {
             //var fTransformMatrix = typeof(SpriteBatch).GetField("transformMatrix", BindingFlags.NonPublic | BindingFlags.Instance);
             //var oldTM = (Matrix)fTransformMatrix.GetValue(spriteBatch);
@@ -240,7 +245,7 @@ namespace MultiSpawn
             }
         }
 
-        private void BigProgressBarSystem_Update(On.Terraria.GameContent.UI.BigProgressBar.BigProgressBarSystem.orig_Update orig, BigProgressBarSystem self)
+        private void BigProgressBarSystem_Update(Terraria.GameContent.UI.BigProgressBar.On_BigProgressBarSystem.orig_Update orig, BigProgressBarSystem self)
         {
             var conf = ModContent.GetInstance<MSConfig>();
 

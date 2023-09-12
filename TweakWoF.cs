@@ -16,14 +16,14 @@ namespace MultiSpawn
     {
         public override void Load()
         {
-            On.Terraria.Main.DrawWoF += Main_DrawWoF;
-            On.Terraria.Player.WOFTongue += Player_WOFTongue;
+            Terraria.On_Main.DrawWoF += Main_DrawWoF;
+            Terraria.On_Player.WOFTongue += Player_WOFTongue;
         }
 
         public override void Unload()
         {
-            On.Terraria.Player.WOFTongue -= Player_WOFTongue;
-            On.Terraria.Main.DrawWoF -= Main_DrawWoF;
+            Terraria.On_Player.WOFTongue -= Player_WOFTongue;
+            Terraria.On_Main.DrawWoF -= Main_DrawWoF;
         }
 
         public struct WoFData : IEquatable<WoFData>
@@ -110,7 +110,7 @@ namespace MultiSpawn
             wofData.Clear();
         }
 
-        private void Main_DrawWoF(On.Terraria.Main.orig_DrawWoF orig, Main self)
+        private void Main_DrawWoF(Terraria.On_Main.orig_DrawWoF orig, Main self)
         {
             // Clear invalid data  (Could as well be absent, BUT out of frame AI advance will mess up the clear!!!)
             wofData.RemoveWhere(d => !d.IsValid());
@@ -188,7 +188,7 @@ namespace MultiSpawn
             }
         }
 
-        private void Player_WOFTongue(On.Terraria.Player.orig_WOFTongue orig, Player self)
+        private void Player_WOFTongue(Terraria.On_Player.orig_WOFTongue orig, Player self)
         {
             foreach (var datum in wofData)
             {

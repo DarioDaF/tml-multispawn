@@ -14,16 +14,16 @@ namespace MultiSpawn
         public override void Load()
         {
             //On.Terraria.NPC.NewNPC += NPC_NewNPC;
-            On.Terraria.Main.DrawNPCs += Main_DrawNPCs;
+            Terraria.On_Main.DrawNPCs += Main_DrawNPCs;
         }
 
         public override void Unload()
         {
-            On.Terraria.Main.DrawNPCs -= Main_DrawNPCs;
+            Terraria.On_Main.DrawNPCs -= Main_DrawNPCs;
             //On.Terraria.NPC.NewNPC -= NPC_NewNPC;
         }
 
-        private void Main_DrawNPCs(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        private void Main_DrawNPCs(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             List<int> wasVisible = new();
             if (!behindTiles)
@@ -53,7 +53,7 @@ namespace MultiSpawn
             NPCID.Sets.SpawnFromLastEmptySlot[NPCID.Golem] = false;
         }
 
-        private int NPC_NewNPC(On.Terraria.NPC.orig_NewNPC orig, IEntitySource source, int X, int Y, int Type, int Start, float ai0, float ai1, float ai2, float ai3, int Target)
+        private int NPC_NewNPC(Terraria.On_NPC.orig_NewNPC orig, IEntitySource source, int X, int Y, int Type, int Start, float ai0, float ai1, float ai2, float ai3, int Target)
         {
             if (Start == 0)
             {

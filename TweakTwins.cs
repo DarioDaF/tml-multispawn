@@ -10,19 +10,19 @@ namespace MultiSpawn
     {
         public override void Load()
         {
-            On.Terraria.NPC.DoDeathEvents_BeforeLoot += NPC_DoDeathEvents_BeforeLoot;
-            IL.Terraria.Main.DrawNPCs += Main_DrawNPCs;
-            On.Terraria.GameContent.ItemDropRules.Conditions.MissingTwin.CanDrop += MissingTwin_CanDrop;
+            Terraria.On_NPC.DoDeathEvents_BeforeLoot += NPC_DoDeathEvents_BeforeLoot;
+            Terraria.IL_Main.DrawNPCs += Main_DrawNPCs;
+            Terraria.GameContent.ItemDropRules.On_Conditions.MissingTwin.CanDrop += MissingTwin_CanDrop;
         }
 
         public override void Unload()
         {
-            On.Terraria.GameContent.ItemDropRules.Conditions.MissingTwin.CanDrop -= MissingTwin_CanDrop;
-            IL.Terraria.Main.DrawNPCs -= Main_DrawNPCs;
-            On.Terraria.NPC.DoDeathEvents_BeforeLoot -= NPC_DoDeathEvents_BeforeLoot;
+            Terraria.GameContent.ItemDropRules.On_Conditions.MissingTwin.CanDrop -= MissingTwin_CanDrop;
+            Terraria.IL_Main.DrawNPCs -= Main_DrawNPCs;
+            Terraria.On_NPC.DoDeathEvents_BeforeLoot -= NPC_DoDeathEvents_BeforeLoot;
         }
 
-        private bool MissingTwin_CanDrop(On.Terraria.GameContent.ItemDropRules.Conditions.MissingTwin.orig_CanDrop orig, Terraria.GameContent.ItemDropRules.Conditions.MissingTwin self, Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        private bool MissingTwin_CanDrop(Terraria.GameContent.ItemDropRules.On_Conditions.MissingTwin.orig_CanDrop orig, Terraria.GameContent.ItemDropRules.Conditions.MissingTwin self, Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
         {
             return !AnyOtherTwin(info.npc);
         }
@@ -37,7 +37,7 @@ namespace MultiSpawn
             return res;
         }
 
-        private void NPC_DoDeathEvents_BeforeLoot(On.Terraria.NPC.orig_DoDeathEvents_BeforeLoot orig, Terraria.NPC self, Terraria.Player closestPlayer)
+        private void NPC_DoDeathEvents_BeforeLoot(Terraria.On_NPC.orig_DoDeathEvents_BeforeLoot orig, Terraria.NPC self, Terraria.Player closestPlayer)
         {
             orig(self, closestPlayer);
             // This bypasses ONLY the bag etc... souls are given anyway?!?! (that is in the condition MissingTwin)
